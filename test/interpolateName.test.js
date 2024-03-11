@@ -381,4 +381,25 @@ describe('interpolateName()', () => {
       'should support regExp in options',
     ],
   ]);
+
+  describe('redos interpolate', () => {
+    // Setting timeout for all tests within this describe block
+    it('should evaluate regex in less then 2 sec', () => {
+      const poc = [
+        '/absolute/path/to/app/js/javascript.js',
+        '[E'.repeat(387300) + '[HASH]',
+        'test content',
+        '[E'.repeat(387300) + 'a69899814931280e2f527219ad6ac754',
+      ];
+      const time = Date.now();
+      const interpolatedName = loaderUtils.interpolateName(
+        { resourcePath: poc[0] },
+        poc[1],
+        { content: poc[2] }
+      );
+      const time_cost = Date.now() - time;
+      expect(time_cost).toBeLessThan(2000);
+      expect(interpolatedName).toBe(poc[3]);
+    });
+  });
 });
